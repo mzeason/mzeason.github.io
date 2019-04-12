@@ -62,6 +62,230 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-0x03以太坊智能合约开发环境搭建及Hello-World的初步尝试" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/12/0x03以太坊智能合约开发环境搭建及Hello-World的初步尝试/" class="article-date">
+  <time datetime="2019-04-12T15:28:51.000Z" itemprop="datePublished">2019-04-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/12/0x03以太坊智能合约开发环境搭建及Hello-World的初步尝试/">0x03以太坊智能合约开发环境搭建及Hello World的初步尝试</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><h4 id="Geth下载"><a href="#Geth下载" class="headerlink" title="Geth下载"></a>Geth下载</h4><p>以太坊的官网地址<a href="https://ethereum.org/" target="_blank" rel="noopener">详见这里</a>，官网会自动识别当前系统，在首页提供对应操作系统的下载链接；也可直接访问 <a href="https://geth.ethereum.org/downloads/" target="_blank" rel="noopener">Geth 下载专区</a>进行下载，由于官网的下载经常抽风，可通过此<a href="https://ethfans.org/wikis/Ethereum-Geth-Mirror" target="_blank" rel="noopener">镜像下载</a>。 在官网的页面会看到 4 种类型的程序，分别支持 Win、Mac、Linux 和源码安装，根据自己的系统选择对应的安装程序。</p>
+<h4 id="Geth安装"><a href="#Geth安装" class="headerlink" title="Geth安装"></a>Geth安装</h4><p>安装步骤没有过多可介绍的，直接执行对应的程序即可安装。如果采用源代码安装需先搭建 Go 编程语言环境，同时需要一定的 Go 语言基础，然后参考 GitHub 上的安装步骤安装即可。此非本节重点内容这里就不再赘述了。</p>
+<p>无论在什么操作系统下安装完成，我们能够找的可执行的程序是 Geth。</p>
+<p>####<a href="https://learnblockchain.cn/2017/11/24/init-env/#Solidity%E5%AE%89%E8%A3%85" title="Solidity安装" target="_blank" rel="noopener"></a>Solidity安装</p>
+<p>强烈建议新手使用<a href="http://remix.ethereum.org/" target="_blank" rel="noopener">Remix -Solidity IDE</a>来进行开发。<br>Remix 是一个基于浏览器的Solidity，就可以不用安装Solidity，本文也将基于Remix Solidity IDE来进行。</p>
+<p>##启动环境<br>geth是一个以太坊客户端，现在利用 geth 启动一个以太坊（开发者）网络节点。(以linux下为例)</p>
+<blockquote>
+<p>./geth –datadir testNet –dev console 2&gt;&gt; test.log</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/13188628-74d5b02ca0ffd9ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="执行后如图所示进入控制台"></p>
+<p>–dev 启用开发者网络（模式），开发者网络会使用POA共识，默认预分配一个开发者账户并且会自动开启挖矿。<br>–datadir 后面的参数是区块数据及秘钥存放目录。<br>第一次输入命令后，它会放在当前目录下新建一个testNet目录来存放数据。<br>console 进入控制台<br>2&gt;&gt; test.log 表示把控制台日志输出到test.log文件</p>
+<p>为了更好的理解，建议新开一个命令行终端，实时显示日志：</p>
+<blockquote>
+<p>tail -f test.log</p>
+</blockquote>
+<p>##准备账户</p>
+<p>#####查看开发者账户：</p>
+<blockquote>
+<p>eth.accounts</p>
+</blockquote>
+<p>#####使用以下命令创建账户：</p>
+<blockquote>
+<p>personal.newAccount(“one”)</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/13188628-59e8806a4a00edba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="查看现在账户列表"></p>
+<p>#####给新账户转账：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eth.sendTransaction(&#123;from: &apos;0x0ead15dfc60a2697fb0f61f6196a8bf672180149&apos;, to: &apos;0x8de9e70d50cd36c1e00b5307817e0a32f0285095&apos;, value: web3.toWei(1, &quot;ether&quot;)&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>看清楚账户地址从哪里来到哪里去。</p>
+<p>#####查看余额：</p>
+<blockquote>
+<p>eth.getBalance(eth.accounts[1])</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/13188628-80f16a48dc0c1ed7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="账户one的余额"></p>
+<p>#####解锁账户：<br>部署合约前需要先解锁账户（就像银行转账要输入密码一样），使用以下命令：</p>
+<blockquote>
+<p>personal.unlockAccount(eth.accounts[1],”one”)</p>
+</blockquote>
+<p>one是创建的那个账户，这里要根据你实际创建的名字来填。</p>
+<p>##编写智能合约<br>在Remix -Solidity IDE里新建一个文件<br><img src="https://upload-images.jianshu.io/upload_images/13188628-9c864d7160a08466.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="文件名就叫hello吧"></p>
+<p>#####写合约代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.18;</span><br><span class="line">contract hello &#123;</span><br><span class="line">    string greeting;</span><br><span class="line">    </span><br><span class="line">    function hello(string _greeting) public &#123;</span><br><span class="line">        greeting = _greeting;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function say() constant public returns (string) &#123;</span><br><span class="line">        return greeting;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们定义了一个名为hello的合约，在合约初始化时保存了一个字符串（我们会传入hello world），每次调用say返回字符串。<br>ctrl+s保存一下，在IDE的右边点击Details<br><img src="https://upload-images.jianshu.io/upload_images/13188628-b7736a5ed64b0d60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>在弹出的对话框中找到WEB3DEPLOY部分，点拷贝，粘贴到编辑器后，修改初始化字符串为hello world。<br><img src="https://upload-images.jianshu.io/upload_images/13188628-60775d77f1e8bfe0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这个把它粘贴出来到文本编辑器修改"><br>修改之后如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">var _greeting = &quot;Hello World&quot; ;</span><br><span class="line">var helloContract = web3.eth.contract([&#123;&quot;constant&quot;:true,&quot;inputs&quot;:[],&quot;name&quot;:&quot;say&quot;,&quot;outputs&quot;:[&#123;&quot;name&quot;:&quot;&quot;,&quot;type&quot;:&quot;string&quot;&#125;],&quot;payable&quot;:false,&quot;stateMutability&quot;:&quot;view&quot;,&quot;type&quot;:&quot;function&quot;&#125;,&#123;&quot;inputs&quot;:[&#123;&quot;name&quot;:&quot;_greeting&quot;,&quot;type&quot;:&quot;string&quot;&#125;],&quot;payable&quot;:false,&quot;stateMutability&quot;:&quot;nonpayable&quot;,&quot;type&quot;:&quot;constructor&quot;&#125;]);</span><br><span class="line">var hello = helloContract.new(</span><br><span class="line">   _greeting,</span><br><span class="line">   &#123;</span><br><span class="line">     from: web3.eth.accounts[1], </span><br><span class="line">     data: &apos;0x608060405234801561001057600080fd5b506040516102a83803806102a8833981018060405281019080805182019291905050508060009080519060200190610049929190610050565b50506100f5565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061009157805160ff19168380011785556100bf565b828001600101855582156100bf579182015b828111156100be5782518255916020019190600101906100a3565b5b5090506100cc91906100d0565b5090565b6100f291905b808211156100ee5760008160009055506001016100d6565b5090565b90565b6101a4806101046000396000f300608060405260043610610041576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063954ab4b214610046575b600080fd5b34801561005257600080fd5b5061005b6100d6565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561009b578082015181840152602081019050610080565b50505050905090810190601f1680156100c85780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b606060008054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561016e5780601f106101435761010080835404028352916020019161016e565b820191906000526020600020905b81548152906001019060200180831161015157829003601f168201915b50505050509050905600a165627a7a72305820ec8886663da8b3392f1bd03a6894f0c1ef7723ba5afe5347d7630a4fdd69b05d0029&apos;, </span><br><span class="line">     gas: &apos;4700000&apos;</span><br><span class="line">   &#125;, function (e, contract)&#123;</span><br><span class="line">    console.log(e, contract);</span><br><span class="line">    if (typeof contract.address !== &apos;undefined&apos;) &#123;</span><br><span class="line">         console.log(&apos;Contract mined! address: &apos; + contract.address + &apos; transactionHash: &apos; + contract.transactionHash);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>第1行：修改字符串为Hello World<br>第2行：修改合约变量名<br>第3行：修改合约实例变量名，之后可以直接用实例调用函数。<br>第6行：修改部署账户为新账户索引，即使用新账户来部署合约。<br>第8行：准备付的gas费用，IDE已经帮我们预估好了。<br>第9行：设置部署回调函数。</p>
+<p>#####然后把它复制到geth控制台<br><img src="https://upload-images.jianshu.io/upload_images/13188628-7a3d61dd0644a082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>出现最后一行则成功了<br>查看下新账户的余额：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-f6b76144943f5b56.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="变少了"></p>
+<p>##运行合约</p>
+<blockquote>
+<p>hello.say()</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/13188628-2948eeab9f70d432.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>至此智能合约开发流程体验就完毕了，日后将继续探索真正有用的合约的编写和不部署。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/04/12/0x03以太坊智能合约开发环境搭建及Hello-World的初步尝试/" data-id="cjue88ljx0001ugutwwba5ofz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-0x02开发、部署第一个去中心化应用-Dapp-宠物商店" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/12/0x02开发、部署第一个去中心化应用-Dapp-宠物商店/" class="article-date">
+  <time datetime="2019-04-12T15:26:53.000Z" itemprop="datePublished">2019-04-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/12/0x02开发、部署第一个去中心化应用-Dapp-宠物商店/">0x02开发、部署第一个去中心化应用(Dapp) - 宠物商店</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天我们来编写一个完整的去中心化（区块链）应用（Dapps）。</p>
+<p>##写在前面</p>
+<p>阅读本文前，你应该对以太坊除此之外，你最好还了解一些HTML及JavaScript知识。</p>
+<p>本文通过实例教大家来开发去中心化应用，应用效果如图：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-7018299560050779.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.jpg"></p>
+<p>从本文，你可以学习到：</p>
+<ul>
+<li>搭建智能合约开发环境</li>
+<li>创建Truffle项目</li>
+<li>编写智能合约</li>
+<li>编译和部署智能合约到区块链</li>
+<li>如何通过Web3和智能合约交互</li>
+<li>MetaMask 的使用</li>
+</ul>
+<p><a href="https://xiaozhuanlan.com/blockchaincore" target="_blank" rel="noopener">小专栏</a>用户在教程结尾处可以下载完整的Dapp代码。</p>
+<h2 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h2><p>Pete有一个宠物店，有16只宠物，他想开发一个去中心化应用，让大家来领养宠物。<br>在truffle box中，已经提供了pet-shop的网站部分的代码，我们只需要编写合约及交互部分。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><ol>
+<li>安装<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">Node</a></li>
+<li>安装 Truffle ：<code>npm install -g truffle</code></li>
+<li>安装<a href="http://truffleframework.com/ganache/" target="_blank" rel="noopener">Ganache</a></li>
+</ol>
+<blockquote>
+<p>Ganache（或Ganache CLI）已经取代了 testrpc。</p>
+</blockquote>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><ol>
+<li><p>建立项目目录并进入</p>
+<blockquote>
+<p>mkdir pet-shop-tutorial<br>cd pet-shop-tutorial</p>
+</blockquote>
+</li>
+<li><p>使用truffle unbox 创建项目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> -&gt;truffle unbox pet-shop</span><br><span class="line"> Downloading...</span><br><span class="line"> Unpacking...</span><br><span class="line"> Setting up...</span><br><span class="line"> Unbox successful. Sweet!</span><br><span class="line">Commands:</span><br><span class="line">  Compile:        truffle compile</span><br><span class="line">  Migrate:        truffle migrate</span><br><span class="line">  Test contracts: truffle test</span><br><span class="line">  Run dev server: npm run dev</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这一步需要等待一会</p>
+<blockquote>
+<p>也可以使用truffle init 来创建一个全新的项目。</p>
+</blockquote>
+<h2 id="项目目录结构"><a href="#项目目录结构" class="headerlink" title="项目目录结构"></a><a href="https://learnblockchain.cn/2018/01/12/first-dapp/#%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84" title="项目目录结构" target="_blank" rel="noopener"></a>项目目录结构</h2><p><code>contracts/</code> 智能合约的文件夹，所有的智能合约文件都放置在这里，里面包含一个重要的合约Migrations.sol（稍后再讲）<br><code>migrations/</code> 用来处理部署（迁移）智能合约 ，迁移是一个额外特别的合约用来保存合约的变化。<br><code>test/</code> 智能合约测试用例文件夹<br><code>truffle.js/</code> 配置文件</p>
+<p>其他代码可以暂时不用管</p>
+<p>##编写智能合约</p>
+<p>智能合约承担着分布式应用的后台逻辑和存储。智能合约使用solidity编写</p>
+<p>在contracts目录下，添加合约文件Adoption.sol<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">contract Adoption &#123;</span><br><span class="line"></span><br><span class="line"> address[16] public adopters;  // 保存领养者的地址</span><br><span class="line"></span><br><span class="line"> // 领养宠物</span><br><span class="line"> function adopt(uint petId) public returns (uint) &#123;</span><br><span class="line"> require(petId &gt;= 0 &amp;&amp; petId &lt;= 15);  // 确保id在数组长度内</span><br><span class="line"></span><br><span class="line"> adopters[petId] = msg.sender;        // 保存调用这地址 </span><br><span class="line"> return petId;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> // 返回领养者</span><br><span class="line"> function getAdopters() public view returns (address[16]) &#123;</span><br><span class="line"> return adopters;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="编译部署智能合约"><a href="#编译部署智能合约" class="headerlink" title="编译部署智能合约"></a>编译部署智能合约</h2><p>Truffle集成了一个开发者控制台，可用来生成一个开发链用来测试和部署智能合约。</p>
+<p>###编译</p>
+<p>Solidity是编译型语言，需要把可读的Solidity代码编译为EVM字节码才能运行。<br>dapp的根目录pet-shop-tutorial下，</p>
+<blockquote>
+<p>truffle compile</p>
+</blockquote>
+<p>输出</p>
+<blockquote>
+<p>Compiling ./contracts/Adoption.sol…<br>Writing artifacts to ./build/contracts</p>
+</blockquote>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>编译之后，就可以部署到区块链上。<br>在migrations文件夹下已经有一个1_initial_migration.js部署脚本，用来部署Migrations.sol合约。<br>Migrations.sol 用来确保不会部署相同的合约。</p>
+<p>现在我们来创建一个自己的部署脚本<code>2_deploy_contracts.js</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var Adoption = artifacts.require(&quot;Adoption&quot;);</span><br><span class="line">      module.exports = function(deployer) &#123;</span><br><span class="line">      deployer.deploy(Adoption);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>在执行部署之前，需要确保有一个区块链运行, 可以使用<br><a href="http://truffleframework.com/ganache/" target="_blank" rel="noopener">Ganache</a>来开启一个私链来进行开发测试，默认会在7545端口上运行一个开发链。<br>Ganache 启动之后是这样：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-1b51fd70f61ae76d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png"></p>
+<p>接下来执行部署命令:</p>
+<blockquote>
+<p>truffle  migrate</p>
+</blockquote>
+<p>执行后，有一下类似的输出，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Using network &apos;develop&apos;.</span><br><span class="line">Running migration: 1_initial_migration.js</span><br><span class="line">  Deploying Migrations...</span><br><span class="line">  ... 0x3076b7dac65afc44ec51508bf6f2b6894f833f0f9560ecad2d6d41ed98a4679f</span><br><span class="line">  Migrations: 0x8cdaf0cd259887258bc13a92c0a6da92698644c0</span><br><span class="line">Saving successful migration to network...</span><br><span class="line">  ... 0xd7bc86d31bee32fa3988f1c1eabce403a1b5d570340a3a9cdba53a472ee8c956</span><br><span class="line">Saving artifacts...</span><br><span class="line">Running migration: 2_deploy_contracts.js</span><br><span class="line">  Deploying Adoption...</span><br><span class="line">  ... 0x2c6ab4471c225b5473f2079ee42ca1356007e51d5bb57eb80bfeb406acc35cd4</span><br><span class="line">  Adoption: 0x345ca3e014aaf5dca488057592ee47305d9b3e10</span><br><span class="line">Saving successful migration to network...</span><br><span class="line">  ... 0xf36163615f41ef7ed8f4a8f192149a0bf633fe1a2398ce001bf44c43dc7bdda0</span><br><span class="line">Saving artifacts...</span><br></pre></td></tr></table></figure></p>
+<p>在打开的Ganache里可以看到区块链状态的变化，现在产生了4个区块。<br><img src="https://upload-images.jianshu.io/upload_images/13188628-5b599057655de7a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.png"></p>
+<p>这时说明已经智能合约已经部署好了。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>现在我们来测试一下智能合约，测试用例可以用 JavaScript or Solidity来编写，这里使用Solidity。</p>
+<p>在<code>test</code>目录下新建一个<code>TestAdoption.sol</code>，编写测试合约<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pragma solidity ^0.4.17;</span><br><span class="line">import &quot;truffle/Assert.sol&quot;;   // 引入的断言</span><br><span class="line">import &quot;truffle/DeployedAddresses.sol&quot;;  // 用来获取被测试合约的地址</span><br><span class="line">import &quot;../contracts/Adoption.sol&quot;;      // 被测试合约</span><br><span class="line">contract TestAdoption &#123;</span><br><span class="line">  Adoption adoption = Adoption(DeployedAddresses.Adoption());</span><br><span class="line">  // 领养测试用例</span><br><span class="line">  function testUserCanAdoptPet() public &#123;</span><br><span class="line">    uint returnedId = adoption.adopt(8);</span><br><span class="line">    uint expected = 8;</span><br><span class="line">    Assert.equal(returnedId, expected, &quot;Adoption of pet ID 8 should be recorded.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  // 宠物所有者测试用例</span><br><span class="line">  function testGetAdopterAddressByPetId() public &#123;</span><br><span class="line">    // 期望领养者的地址就是本合约地址，因为交易是由测试合约发起交易，</span><br><span class="line">    address expected = this;</span><br><span class="line">    address adopter = adoption.adopters(8);</span><br><span class="line">    Assert.equal(adopter, expected, &quot;Owner of pet ID 8 should be recorded.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">    // 测试所有领养者</span><br><span class="line">  function testGetAdopterAddressByPetIdInArray() public &#123;</span><br><span class="line">  // 领养者的地址就是本合约地址</span><br><span class="line">    address expected = this;</span><br><span class="line">    address[16] memory adopters = adoption.getAdopters();</span><br><span class="line">    Assert.equal(adopters[8], expected, &quot;Owner of pet ID 8 should be recorded.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Assert.sol 及 DeployedAddresses.sol是Truffle框架提供，在test目录下并不提供truffle目录。</p>
+<p>TestAdoption合约中添加adopt的测试用例</p>
+<h3 id="运行测试用例"><a href="#运行测试用例" class="headerlink" title="运行测试用例"></a>运行测试用例</h3><p>在终端中，执行</p>
+<blockquote>
+<p>truffle test</p>
+</blockquote>
+<p>如果测试通过，则终端输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Using network &apos;develop&apos;.</span><br><span class="line">Compiling ./contracts/Adoption.sol...</span><br><span class="line">Compiling ./test/TestAdoption.sol...</span><br><span class="line">Compiling truffle/Assert.sol...</span><br><span class="line">Compiling truffle/DeployedAddresses.sol...</span><br><span class="line">  TestAdoption</span><br><span class="line">    ✓ testUserCanAdoptPet (62ms)</span><br><span class="line">    ✓ testGetAdopterAddressByPetId (53ms)</span><br><span class="line">    ✓ testGetAdopterAddressByPetIdInArray (73ms)</span><br><span class="line">  3 passing (554ms)</span><br></pre></td></tr></table></figure></p>
+<p>##创建用户接口和智能合约交互</p>
+<p>我们已经编写和部署及测试好了我们的合约，接下我们为合约编写UI，让合约真正可以用起来。</p>
+<p>在Truffle Box <code>pet-shop</code>里，已经包含了应用的前端代码，代码在<code>src/</code>文件夹下。</p>
+<p>在编辑器中打开<code>src/js/app.js</code><br>可以看到用来管理整个应用的App对象，init函数加载宠物信息，就初始化<a href="https://github.com/ethereum/web3.js/" target="_blank" rel="noopener">web3</a>.<br>web3是一个实现了与以太坊节点通信的库，我们利用web3来和合约进行交互。</p>
+<p>###初始化web3</p>
+<p>接下来，我们来编辑app.js修改initWeb3():<br>删除注释，修改为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">initWeb3: function() &#123;</span><br><span class="line">  // Is there an injected web3 instance?</span><br><span class="line">  if (typeof web3 !== &apos;undefined&apos;) &#123;</span><br><span class="line">    App.web3Provider = web3.currentProvider;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // If no injected web3 instance is detected, fall back to Ganache</span><br><span class="line">    App.web3Provider = new Web3.providers.HttpProvider(&apos;http://localhost:7545&apos;);</span><br><span class="line">  &#125;</span><br><span class="line">  web3 = new Web3(App.web3Provider);</span><br><span class="line">  return App.initContract();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="实例化合约"><a href="#实例化合约" class="headerlink" title="实例化合约"></a>实例化合约</h3><p>使用truffle-contract会帮我们保存合约部署的信息，就不需要我们手动修改合约地址，修改initContract()代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">initContract: function() &#123;</span><br><span class="line">  // 加载Adoption.json，保存了Adoption的ABI（接口说明）信息及部署后的网络(地址)信息，它在编译合约的时候生成ABI，在部署的时候追加网络信息</span><br><span class="line">  $.getJSON(&apos;Adoption.json&apos;, function(data) &#123;</span><br><span class="line">    // 用Adoption.json数据创建一个可交互的TruffleContract合约实例。</span><br><span class="line">    var AdoptionArtifact = data;</span><br><span class="line">    App.contracts.Adoption = TruffleContract(AdoptionArtifact);</span><br><span class="line">    // Set the provider for our contract</span><br><span class="line">    App.contracts.Adoption.setProvider(App.web3Provider);</span><br><span class="line">    // Use our contract to retrieve and mark the adopted pets</span><br><span class="line">    return App.markAdopted();</span><br><span class="line">  &#125;);</span><br><span class="line">  return App.bindEvents();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="处理领养"><a href="#处理领养" class="headerlink" title="处理领养"></a>处理领养</h3><p>修改markAdopted()代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">markAdopted: function(adopters, account) &#123;</span><br><span class="line">  var adoptionInstance;</span><br><span class="line">  App.contracts.Adoption.deployed().then(function(instance) &#123;</span><br><span class="line">    adoptionInstance = instance;</span><br><span class="line">    // 调用合约的getAdopters(), 用call读取信息不用消耗gas</span><br><span class="line">    return adoptionInstance.getAdopters.call();</span><br><span class="line">  &#125;).then(function(adopters) &#123;</span><br><span class="line">    for (i = 0; i &lt; adopters.length; i++) &#123;</span><br><span class="line">      if (adopters[i] !== &apos;0x0000000000000000000000000000000000000000&apos;) &#123;</span><br><span class="line">        $(&apos;.panel-pet&apos;).eq(i).find(&apos;button&apos;).text(&apos;Success&apos;).attr(&apos;disabled&apos;, true);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;).catch(function(err) &#123;</span><br><span class="line">    console.log(err.message);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>修改handleAdopt()代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">handleAdopt: function(event) &#123;</span><br><span class="line">  event.preventDefault();</span><br><span class="line">  var petId = parseInt($(event.target).data(&apos;id&apos;));</span><br><span class="line">  var adoptionInstance;</span><br><span class="line">  // 获取用户账号</span><br><span class="line">  web3.eth.getAccounts(function(error, accounts) &#123;</span><br><span class="line">    if (error) &#123;</span><br><span class="line">      console.log(error);</span><br><span class="line">    &#125;</span><br><span class="line">    var account = accounts[0];</span><br><span class="line">    App.contracts.Adoption.deployed().then(function(instance) &#123;</span><br><span class="line">      adoptionInstance = instance;</span><br><span class="line">      // 发送交易领养宠物</span><br><span class="line">      return adoptionInstance.adopt(petId, &#123;from: account&#125;);</span><br><span class="line">    &#125;).then(function(result) &#123;</span><br><span class="line">      return App.markAdopted();</span><br><span class="line">    &#125;).catch(function(err) &#123;</span><br><span class="line">      console.log(err.message);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>##在浏览器中运行</p>
+<h3 id="安装-MetaMask"><a href="#安装-MetaMask" class="headerlink" title="安装 MetaMask"></a>安装 MetaMask</h3><p>MetaMask 是一款插件形式的以太坊轻客户端，开发过程中使用MetaMask和我们的dapp进行交互是个很好的选择，通过此<a href="https://metamask.io/" target="_blank" rel="noopener">链接</a>安装，安装完成后，浏览器工具条会显示一个小狐狸图标。</p>
+<p>###配置钱包</p>
+<p>在接受隐私说明后，会出现页面如下：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-e45743edd6bfd30f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="4.png"></p>
+<p>这里我们通过还原一个Ganache为我们创建好的钱包，作为我们的开发测试钱包。点击页面的<strong>Import Existing DEN</strong>，输入Ganache显示的助记词。</p>
+<p>然后自己想要的密码，点击OK。<br>如图：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-093c4bf01cbc9e99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5.png"></p>
+<p>###连接开发区块链网络</p>
+<p>默认连接的是以太坊主网（左上角显示），选择<strong>Custom RPC</strong>，添加一个网络：<strong><a href="http://127.0.0.1:7545/" target="_blank" rel="noopener">http://127.0.0.1:7545</a></strong>，点返回后，显示如下：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-ed2b0dba0d662497.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="6.png"></p>
+<p>这是左上角显示为<strong>Private Network</strong>，账号是Ganache中默认的第一个账号。</p>
+<p>至此MetaMask的安装，配置已经完成。</p>
+<h3 id="安装和配置lite-server"><a href="#安装和配置lite-server" class="headerlink" title="安装和配置lite-server"></a>安装和配置lite-server</h3><p>接下来需要本地的web 服务器提供服务的访问， Truffle Box <strong>pet-shop</strong>里提供了一个<strong>lite-server</strong>可以直接使用，我们看看它是如何工作的。<br><strong>bs-config.json</strong>指示了lite-server的工作目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;server&quot;: &#123;</span><br><span class="line">    &quot;baseDir&quot;: [&quot;./src&quot;, &quot;./build/contracts&quot;]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>./src 是网站文件目录<br>./build/contracts 是合约输出目录</p>
+<p>以此同时，在package.json文件的scripts中添加了dev命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">  &quot;dev&quot;: &quot;lite-server&quot;,</span><br><span class="line">  &quot;test&quot;: &quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p>当运行npm run dev的时候，就会启动lite-server</p>
+<p>###启动服务</p>
+<blockquote>
+<p>npm run dev</p>
+</blockquote>
+<p>会自动打开浏览器显示我们的dapp，如本文的第一张图。<br>现在领养一直宠物看看，当我们点击<strong>Adopt</strong>时，MetaMask会提示我们交易的确认，如图：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13188628-a60a5d13a30ae33f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7.png"></p>
+<p>点击Submit确认后，就可以看到成功领养了这次宠物。</p>
+<p>在MetaMask中，也可以看到交易的清单：<br><img src="https://upload-images.jianshu.io/upload_images/13188628-f6aa1e70b0183904.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8.png"></p>
+<p>好了，恭喜你，即将成为一名去中心化式应用开发者的你已经成为迈出了坚实的一步。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/04/12/0x02开发、部署第一个去中心化应用-Dapp-宠物商店/" data-id="cjue88ljy0002ugut0ryygdb1" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-0x01创建自己的数字货币（代币）进行ICO" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/04/12/0x01创建自己的数字货币（代币）进行ICO/" class="article-date">
@@ -119,7 +343,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/04/12/0x01创建自己的数字货币（代币）进行ICO/" data-id="cjue83jvl00007sutgo98e66i" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/04/12/0x01创建自己的数字货币（代币）进行ICO/" data-id="cjue88ljs0000ugut7782qbqu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -164,7 +388,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/04/11/hello-world/" data-id="cjue83jw200017sutbcene4lg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/04/11/hello-world/" data-id="cjue88lka0003ugutp07qj52f" class="article-share-link">Share</a>
       
       
     </footer>
@@ -203,6 +427,14 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/04/12/0x03以太坊智能合约开发环境搭建及Hello-World的初步尝试/">0x03以太坊智能合约开发环境搭建及Hello World的初步尝试</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/12/0x02开发、部署第一个去中心化应用-Dapp-宠物商店/">0x02开发、部署第一个去中心化应用(Dapp) - 宠物商店</a>
+          </li>
         
           <li>
             <a href="/2019/04/12/0x01创建自己的数字货币（代币）进行ICO/">0x01创建自己的数字货币（代币）进行ICO</a>
